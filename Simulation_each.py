@@ -7,7 +7,7 @@ import GameAI
 
 
 #hand - hand to attack; card_ind - number of the card to attack
-def OneRoundWithFixedHand(hand_attack=[],card_ind=None):
+def OneRoundWithFixedHand(hand_attack = [], card_ind = None, myfile = ""):
     New_hand = []
     deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
             '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
@@ -15,10 +15,24 @@ def OneRoundWithFixedHand(hand_attack=[],card_ind=None):
             '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
     deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
     random.shuffle(deck) #shuffle deck
-    g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
+    #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
+    g = GameAI.Game(deck, hand_attack, card_ind, 1, myfile)
     New_hand = g.runOneRound() #run one round
-    
+   
     return New_hand
+
+def someRoundsWithFixedHand(hand_attack = [], card_ind = None, num_rounds=0, myfile = ""):
+    New_hand = []
+    deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+            '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+            '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+            '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+    deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
+    random.shuffle(deck) #shuffle deck
+    #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
+    g = GameAI.Game(deck, hand_attack, card_ind, num_rounds, myfile)
+    g.allRounds() #run one round
+
 
 def MainLoop_each(deck,N=0):
     max_amount = 6 #max amount of cards in hand
@@ -45,7 +59,7 @@ def MainLoop_each(deck,N=0):
         #H.append(hand0)
         
         for j in range(N):
-            Res = OneRoundWithFixedHand(hand0,0)
+            Res = OneRoundWithFixedHand(hand0,0,"")
             T[j][k] = Res[1]
             u0 = Utility(hand0, Res[1])
             u1 = Utility(Res[0],Res[1])

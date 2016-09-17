@@ -7,28 +7,41 @@ import GameAI
 
 
 #hand - hand to attack; card_ind - number of the card to attack
-def OneRoundWithFixedHand(hand_attack = [], card_ind = None, myfile = ""):
+def OneRoundWithFixedHand(deck=[],hand_attack = [], card_ind = None, myfile = ""):
     New_hand = []
-    deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
-            '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
-            '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
-            '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+    #deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+    #        '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+    #        '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+    #        '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+    
+    if deck == []:
+        deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+                '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+                '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+                '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+        random.shuffle(deck) 
     deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
-    random.shuffle(deck) #shuffle deck
+#shuffle deck
     #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
     g = GameAI.Game(deck, hand_attack, card_ind, 1, myfile)
     New_hand = g.runOneRound() #run one round
    
     return New_hand
 
-def someRoundsWithFixedHand(hand_attack = [], card_ind = None, num_rounds=0, myfile = ""):
-    New_hand = []
-    deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
-            '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
-            '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
-            '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+def someRoundsWithFixedHand(deck=[],hand_attack = [], card_ind = None, num_rounds=0, myfile = ""):
+    #New_hand = []
+    #deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+    #        '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+    #        '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+    #        '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+    
+    if deck == []:
+        deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+                '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+                '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+                '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+        random.shuffle(deck) 
     deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
-    random.shuffle(deck) #shuffle deck
     #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
     g = GameAI.Game(deck, hand_attack, card_ind, num_rounds, myfile)
     g.allRounds() #run one round
@@ -49,17 +62,19 @@ def MainLoop_each(deck,N=0):
             '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
     L=len(deck)
     
-    for k in range(L):
+    for k in range(L): 
         hand0 = []
         hand0.append(deck[k])
         deck_upd = list(filter(lambda x: not x in hand0,deck))
-        random.shuffle(deck_upd)
-        for i in range(max_amount-1):
-            hand0.append(deck_upd[i])
-        #H.append(hand0)
         
         for j in range(N):
-            Res = OneRoundWithFixedHand(hand0,0,"")
+            random.shuffle(deck_upd) #!!!!!!!!!!!!!!!!!!!!SHUFFLE
+            
+            for i in range(max_amount-1):
+                """take card from the end of deck similarly to the GameAI and append to fixed 1st attacker hand"""
+                hand0.append(deck_upd[-i]) 
+                
+            Res = OneRoundWithFixedHand(deck_upd,hand0,0,"")
             T[j][k] = Res[1]
             u0 = Utility(hand0, Res[1])
             u1 = Utility(Res[0],Res[1])

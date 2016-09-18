@@ -34,8 +34,11 @@ def someRoundsWithFixedHand(deck=[],hand_attack = [], card_ind = None, num_round
     g = GameAI.Game(deck, hand_attack, card_ind, num_rounds, myfile)
     g.allRounds() #run number of rounds 'num_rounds' all whole game (if num_rounds is big enough or is None)
 
+def clearComments(myfile):
+    if myfile != "":
+        open(myfile, 'w').close()   #clear old comments
 
-def MainLoop_each(deck,N=0):
+def MainLoop_each(deck, N = 0, myfile = ""):
     max_amount = 6 #max amount of cards in hand
     U = numpy.zeros((N,36))
     T = [[]*N]*36
@@ -49,6 +52,8 @@ def MainLoop_each(deck,N=0):
             '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
     L=len(deck)
     
+    clearComments(myfile)
+    
     for k in range(L): 
         hand0 = []
         hand0.append(deck[k])
@@ -60,17 +65,14 @@ def MainLoop_each(deck,N=0):
             for i in range(max_amount-1):
                 """take card from the end of deck similarly to the GameAI and append to fixed 1st attacker hand"""
                 hand0.append(deck_upd[-i]) 
-                
-            Res = OneRoundWithFixedHand(deck_upd,hand0,0,"") #or instead of "" -> smth like "log.txt"
+            
+            Res = OneRoundWithFixedHand(deck_upd,hand0,0, myfile) #"" or name of file (parameter of MainLoop_each)
             T[j][k] = Res[1]
             u0 = Utility(hand0, Res[1])
             u1 = Utility(Res[0],Res[1])
             U[j][k] = (u1-u0)
             hand0 = hand0[:-5]
-           
-    
-        
-        
+   
       
     i=0
     with open('Utility_1M.csv', 'w',newline='') as myfile:

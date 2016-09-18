@@ -1,7 +1,6 @@
 import csv
 import random
 import numpy
-from CardCombs import CardCombs
 from ObjectiveFunction import Utility
 import GameAI
 
@@ -9,11 +8,7 @@ import GameAI
 #hand - hand to attack; card_ind - number of the card to attack
 def OneRoundWithFixedHand(deck=[],hand_attack = [], card_ind = None, myfile = ""):
     New_hand = []
-    #deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
-    #        '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
-    #        '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
-    #        '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
-    
+
     if deck == []:
         deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
                 '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
@@ -22,18 +17,12 @@ def OneRoundWithFixedHand(deck=[],hand_attack = [], card_ind = None, myfile = ""
         random.shuffle(deck) 
     deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
 #shuffle deck
-    #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
     g = GameAI.Game(deck, hand_attack, card_ind, 1, myfile)
     New_hand = g.runOneRound() #run one round
    
     return New_hand
 
 def someRoundsWithFixedHand(deck=[],hand_attack = [], card_ind = None, num_rounds=0, myfile = ""):
-    New_hand = []
-    #deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
-    #        '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
-    #        '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
-    #        '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
     
     if deck == []:
         deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
@@ -42,9 +31,8 @@ def someRoundsWithFixedHand(deck=[],hand_attack = [], card_ind = None, num_round
                 '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
         random.shuffle(deck) 
     deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
-    #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
     g = GameAI.Game(deck, hand_attack, card_ind, num_rounds, myfile)
-    g.allRounds() #run one round
+    g.allRounds() #run number of rounds 'num_rounds' all whole game (if num_rounds is big enough or is None)
 
 
 def MainLoop_each(deck,N=0):
@@ -54,7 +42,6 @@ def MainLoop_each(deck,N=0):
     T = numpy.empty((N,36),dtype=object)
     hand0, hand1 = [],[]
     deck_upd=[]
-    H = [[]*N]*36
     
     deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
             '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
@@ -74,15 +61,13 @@ def MainLoop_each(deck,N=0):
                 """take card from the end of deck similarly to the GameAI and append to fixed 1st attacker hand"""
                 hand0.append(deck_upd[-i]) 
                 
-            Res = OneRoundWithFixedHand(deck_upd,hand0,0,"log.txt")
+            Res = OneRoundWithFixedHand(deck_upd,hand0,0,"") #or instead of "" -> smth like "log.txt"
             T[j][k] = Res[1]
-            H[j][k] = hand0
             u0 = Utility(hand0, Res[1])
             u1 = Utility(Res[0],Res[1])
             U[j][k] = (u1-u0)
             hand0 = hand0[:-5]
-            ##print(U[i][j])
-            
+           
     
         
         
@@ -102,10 +87,3 @@ def MainLoop_each(deck,N=0):
             i+=1    
     
     return U
-   
-            
-    
-    
-    
-    
-    

@@ -4,49 +4,83 @@ import numpy
 from CardCombs import CardCombs
 from ObjectiveFunction import Utility
 import GameAI
-from download_stats import printArray3D
+
 
 #hand - hand to attack; card_ind - number of the card to attack
-def OneRoundWithFixedHand(hand_attack=[],card_ind=None):
+def OneRoundWithFixedHand(deck=[],hand_attack = [], card_ind = None, myfile = ""):
     New_hand = []
-    deck = ['6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣', 'A♣',\
-            '6♦', '7♦', '8♦', '9♦', '10♦', 'J♦', 'Q♦', 'K♦', 'A♦',\
-            '6♥', '7♥', '8♥', '9♥', '10♥', 'J♥', 'Q♥', 'K♥', 'A♥',\
-            '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠', 'A♠']
-    deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
-    random.shuffle(deck) #shuffle deck
-    g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
-    New_hand = g.runOneRound() #run one round
+    #deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+    #        '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+    #        '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+    #        '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
     
+    if deck == []:
+        deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+                '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+                '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+                '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+        random.shuffle(deck) 
+    deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
+#shuffle deck
+    #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
+    g = GameAI.Game(deck, hand_attack, card_ind, 1, myfile)
+    New_hand = g.runOneRound() #run one round
+   
     return New_hand
+
+def someRoundsWithFixedHand(deck=[],hand_attack = [], card_ind = None, num_rounds=0, myfile = ""):
+    New_hand = []
+    #deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+    #        '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+    #        '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+    #        '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+    
+    if deck == []:
+        deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+                '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+                '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+                '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
+        random.shuffle(deck) 
+    deck = list(filter(lambda x: not x in hand_attack,deck)) #remove cards in hand from deck
+    #g = GameAI.Game(deck,hand_attack,card_ind)#initialize game with rigged deck
+    g = GameAI.Game(deck, hand_attack, card_ind, num_rounds, myfile)
+    g.allRounds() #run one round
+
 
 def MainLoop_each(deck,N=0):
     max_amount = 6 #max amount of cards in hand
     U = numpy.zeros((N,36))
+    T = [[]*N]*36
+    T = numpy.empty((N,36),dtype=object)
     hand0, hand1 = [],[]
     deck_upd=[]
-    #H = []
+    H = [[]*N]*36
     
-    deck = ['6♣', '7♣', '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣', 'A♣',\
-            '6♦', '7♦', '8♦', '9♦', '10♦', 'J♦', 'Q♦', 'K♦', 'A♦',\
-            '6♥', '7♥', '8♥', '9♥', '10♥', 'J♥', 'Q♥', 'K♥', 'A♥',\
-            '6♠', '7♠', '8♠', '9♠', '10♠', 'J♠', 'Q♠', 'K♠', 'A♠']
+    deck = ['6C', '7C', '8C', '9C', '10C', 'JC', 'QC', 'KC', 'AC',\
+            '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD', 'AD',\
+            '6H', '7H', '8H', '9H', '10H', 'JH', 'QH', 'KH', 'AH',\
+            '6S', '7S', '8S', '9S', '10S', 'JS', 'QS', 'KS', 'AS']
     L=len(deck)
     
-    for k in range(L):
+    for k in range(L): 
         hand0 = []
         hand0.append(deck[k])
         deck_upd = list(filter(lambda x: not x in hand0,deck))
-        random.shuffle(deck_upd)
-        for i in range(max_amount-1):
-            hand0.append(deck_upd[i])
-        #H.append(hand0)
         
         for j in range(N):
-            Res = OneRoundWithFixedHand(hand0,0)
+            random.shuffle(deck_upd) #!!!!!!!!!!!!!!!!!!!!SHUFFLE
+            
+            for i in range(max_amount-1):
+                """take card from the end of deck similarly to the GameAI and append to fixed 1st attacker hand"""
+                hand0.append(deck_upd[-i]) 
+                
+            Res = OneRoundWithFixedHand(deck_upd,hand0,0,"log.txt")
+            T[j][k] = Res[1]
+            H[j][k] = hand0
             u0 = Utility(hand0, Res[1])
             u1 = Utility(Res[0],Res[1])
             U[j][k] = (u1-u0)
+            hand0 = hand0[:-5]
             ##print(U[i][j])
             
     
@@ -54,11 +88,18 @@ def MainLoop_each(deck,N=0):
         
       
     i=0
-    with open('test.csv', 'w',newline='') as myfile:
+    with open('Utility_1M.csv', 'w',newline='') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
         while i<N:
             wr.writerow(U[i])
-            i+=1  
+            i+=1
+            
+    i=0
+    with open('Trumps_1M.csv', 'w', newline='') as myfile:
+        wr = csv.writer(myfile)
+        while i<N:
+            wr.writerow(T[i])
+            i+=1    
     
     return U
    

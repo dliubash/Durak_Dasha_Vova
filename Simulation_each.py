@@ -57,9 +57,10 @@ def MainLoop_each(deck, N = 0, myfile = ""):
     for k in range(L): 
         hand0 = []
         hand0.append(deck[k])
-        deck_upd = list(filter(lambda x: not x in hand0,deck))
+        deck_upd_base = list(filter(lambda x: not x in hand0,deck))
         
         for j in range(N):
+            deck_upd = deck_upd_base[k:]+deck_upd_base[:k]
             random.shuffle(deck_upd) #!!!!!!!!!!!!!!!!!!!!SHUFFLE
             
             for i in range(max_amount-1):

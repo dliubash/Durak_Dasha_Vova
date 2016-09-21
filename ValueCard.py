@@ -19,6 +19,6 @@ def ValueCard(s,Trump) :
     elif s[0] == 'A':
         v = 14
     if s[-1] == Trump[-1]:
-        v+=1
+        v+=9
 
     return v
